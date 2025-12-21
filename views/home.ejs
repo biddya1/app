@@ -107,31 +107,18 @@
 
    <%- include("navbar") %>
 
-    <!-- Body Section with Cards -->
-    <div class="container">
-        <div class="cards">
-            <div class="card">
-                <img src="https://via.placeholder.com/300x150" alt="Card Image 1">
-                <h3>Card Title 1</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
-            <div class="card">
-                <img src="https://via.placeholder.com/300x150" alt="Card Image 2">
-                <h3>Card Title 2</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
-            <div class="card">
-                <img src="https://via.placeholder.com/300x150" alt="Card Image 3">
-                <h3>Card Title 3</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
-            <div class="card">
-                <img src="https://via.placeholder.com/300x150" alt="Card Image 4">
-                <h3>Card Title 4</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
+   
+
+    <div class="cards">
+    <% blogs.forEach((blog)=>{ %>
+        <div class="card">
+            <h2><%- blog.title %></h2>
+            <h4><%- blog.subTitle %></h4>
+            <p><%- blog.description %></p>
         </div>
-    </div>
+    <% }) %>
+</div>
+
 
     <%- include("footer") %>
     

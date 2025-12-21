@@ -16,7 +16,9 @@ app.use(express.json());
 
 // HOME PAGE
 app.get("/", async (req, res) => {
+    //blogs table batw data nikalna paryo
     const blogs = await Blog.findAll();
+    console.log(blogs);
     res.render("home", { blogs });
 });
 
@@ -28,6 +30,10 @@ app.get("/addblog", (req, res) => {
 // ADD BLOG POST
 app.post("/addblog", async (req, res) => {
     const { title, subTitle, description } = req.body;
+    if(!title || !subTitle || !description){
+        return res.send("Please provide title, subTitle,description");
+    }
+    //inserting into blog table
 
     try {
         await Blog.create({
@@ -36,7 +42,7 @@ app.post("/addblog", async (req, res) => {
             description,
         });
 
-        res.send("Blog added successfully");
+res.redirect("/");
     } catch (err) {
         console.error(err);
         res.status(500).send("Error adding blog");
