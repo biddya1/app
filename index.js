@@ -16,10 +16,13 @@ app.use(express.json());
 
 // HOME PAGE
 app.get("/", async (req, res) => {
-    //blogs table batw data nikalna paryo
-    const blogs = await Blog.findAll();
-    console.log(blogs);
-    res.render("home", { blogs });
+    try {
+        const blogs = await Blog.findAll();
+        res.render("home", { blogs });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error fetching blogs");
+    }
 });
 
 // ADD BLOG PAGE
@@ -30,10 +33,10 @@ app.get("/addblog", (req, res) => {
 // ADD BLOG POST
 app.post("/addblog", async (req, res) => {
     const { title, subTitle, description } = req.body;
-    if(!title || !subTitle || !description){
-        return res.send("Please provide title, subTitle,description");
+
+    if (!title || !subTitle || !description) {
+        return res.send("Please provide title, subTitle, and description");
     }
-    //inserting into blog table
 
     try {
         await Blog.create({
@@ -41,11 +44,43 @@ app.post("/addblog", async (req, res) => {
             subTitle,
             description,
         });
-
-res.redirect("/");
+        res.redirect("/");
     } catch (err) {
         console.error(err);
         res.status(500).send("Error adding blog");
+    }
+});
+
+// SINGLE BLOG PAGE
+app.get("/blog/:id", async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const foundData = await Blog.findOne({  // use findOne instead of findAll
+            where: { id: id }
+        });
+
+        if (!foundData) return res.status(404).send("Blog not found");
+
+        res.render("singleBlog", { blog: foundData });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error fetching blog");
+    }
+});
+
+// DELETE BLOG
+app.get("/delete/:id", async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        await Blog.destroy({
+            where: { id: id }  // fixed typo (was whwrw)
+        });
+        res.redirect("/");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error deleting blog");
     }
 });
 

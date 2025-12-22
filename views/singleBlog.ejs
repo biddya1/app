@@ -109,17 +109,14 @@
 
    
 
-    <div class="cards">
-    <% blogs.forEach((blog)=>{ %>
-        <div class="card">
-            <h2><%- blog.title %></h2>
-            <h4><%- blog.subTitle %></h4>
-            <p><%- blog.description %></p>
-            <a href="/blog/<%-blog.id %>">See more</a>
-        </div>
-    <% }) %>
-</div>
-
+    <div class="card">
+        <h2><%- blog.title %></h2>
+        <h4><%- blog.subTitle %></h4>
+        <p><%- blog.description %></p>
+        <a href="/delete/<%= blog.id %>">
+            <button>Delete me</button>
+        </a>
+    </div>
 
     <%- include("footer") %>
     
