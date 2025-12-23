@@ -108,15 +108,20 @@
    <%- include("navbar") %>
 
    
+<div class="card">
+    <h2><%- blog.title %></h2>
+    <h4><%- blog.subTitle %></h4>
+    <p><%- blog.description %></p>
 
-    <div class="card">
-        <h2><%- blog.title %></h2>
-        <h4><%- blog.subTitle %></h4>
-        <p><%- blog.description %></p>
-        <a href="/delete/<%= blog.id %>">
-            <button>Delete me</button>
-        </a>
-    </div>
+    <a href="/delete/<%= blog.id %>">
+        <button>Delete Me</button>
+    </a>
+
+    <a href="/update/<%= blog.id %>">
+        <button>Update Me</button>
+    </a>
+</div>
+
 
     <%- include("footer") %>
     

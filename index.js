@@ -56,8 +56,8 @@ app.get("/blog/:id", async (req, res) => {
     const id = req.params.id;
 
     try {
-        const foundData = await Blog.findOne({  // use findOne instead of findAll
-            where: { id: id }
+        const foundData = await Blog.findOne({
+            where: { id }
         });
 
         if (!foundData) return res.status(404).send("Blog not found");
@@ -75,12 +75,46 @@ app.get("/delete/:id", async (req, res) => {
 
     try {
         await Blog.destroy({
-            where: { id: id }  // fixed typo (was whwrw)
+            where: { id }
         });
         res.redirect("/");
     } catch (err) {
         console.error(err);
         res.status(500).send("Error deleting blog");
+    }
+});
+
+// UPDATE BLOG PAGE (FIXED)
+app.get("/update/:id", async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const blog = await Blog.findByPk(id);
+
+        if (!blog) return res.status(404).send("Blog not found");
+
+        res.render("updateBlog", { blog });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading update page");
+    }
+});
+
+// UPDATE BLOG POST (FIXED)
+app.post("/update/:id", async (req, res) => {
+    const { id } = req.params;
+    const { title, subTitle, description } = req.body;
+
+    try {
+        await Blog.update(
+            { title, subTitle, description },
+            { where: { id } }
+        );
+
+        res.redirect(`/blog/${id}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error updating blog");
     }
 });
 
