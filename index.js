@@ -3,9 +3,13 @@ const path = require("path");
 const { DataTypes } = require("sequelize");
 
 const sequelize = require("./config/dbConfig");
+const { storage,multer } = require("./middleware/multerCongig");
+
+const upload = multer({storage: storage});
 const Blog = require("./config/model/blogModel")(sequelize, DataTypes);
 
 const app = express();
+
 
 // Set EJS as templating engine
 app.set("view engine", "ejs");
@@ -31,7 +35,8 @@ app.get("/addblog", (req, res) => {
 });
 
 // ADD BLOG POST
-app.post("/addblog", async (req, res) => {
+app.post("/addblog",upload.single('image'), async (req, res) => {
+    console.log(req.file);
     const { title, subTitle, description } = req.body;
 
     if (!title || !subTitle || !description) {
@@ -99,8 +104,14 @@ app.get("/update/:id", async (req, res) => {
         res.status(500).send("Error loading update page");
     }
 });
+//file handling garna ko lagi
+app.post("/addblog",async(req,res)=>{
 
-// UPDATE BLOG POST (FIXED)
+})
+
+
+
+// UPDATE BLOG POST 
 app.post("/update/:id", async (req, res) => {
     const { id } = req.params;
     const { title, subTitle, description } = req.body;
