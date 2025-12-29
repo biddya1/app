@@ -1,11 +1,12 @@
-const dbConfig = require('../dbConfig');
+const dbConfig = require("../config/dbConfig");
 const { Sequelize, DataTypes } = require("sequelize");
 
-// sequelize using config values
+// la sequelize yo config haru lag ani database connect gardey vaneko hae 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
   operatorsAliases: false,
+  port : 50469, 
 
   pool: {
     max: dbConfig.pool.max,
@@ -15,16 +16,28 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   },
 });
 
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("CONNECTED!!");
+  })
+  .catch((err) => {
+    console.log("Error" + err);
+  });
+
 const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// importing model files
-db.blogs = require("../model/blogModel.js")(sequelize, DataTypes);
-db.users = require("../model/userModel.js")(sequelize, DataTypes);
+// importing model files 
+db.blogs = require("./blogModel.js")(sequelize, DataTypes);
+db.users = require("./userModel.js")(sequelize, DataTypes);
 
-// ❌ REMOVED authenticate()
-// ❌ REMOVED sync() — should be only in index.js
+
+
+db.sequelize.sync({ force: false}).then(() => {
+  console.log("yes re-sync done");
+});
 
 module.exports = db;

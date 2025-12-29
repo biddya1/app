@@ -27,7 +27,6 @@ const sequelize = new Sequelize(
     }
 );
 
-// Test connection
 sequelize.authenticate()
     .then(() => console.log("Database connected!"))
     .catch(err => console.error("DB connection error:", err));
@@ -36,11 +35,9 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// Import models
 db.blogs = require("../model/blogModel")(sequelize, DataTypes);
 db.users = require("../model/userModel")(sequelize, DataTypes);
 
-// Sync database
 db.sequelize.sync({ force: false })
     .then(() => console.log("Database synced!"));
 

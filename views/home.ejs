@@ -3,7 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <link rel="stylesheet" href="/public/styles/home.css">
+    <style>
+        /* Reset default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Navbar styling */
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ff6347;
+        }
+
+        /* Body styling */
+        body {
+            background-color: #f4f4f4;
+        }
+
+        /* Cards container - vertical layout */
+        .cards {
+    display: flex !important;      /* force flex layout */
+    flex-direction: column !important;  /* stack vertically */
+    align-items: center;           /* center cards horizontally */
+    gap: 20px;                     /* space between cards */
+    padding: 20px;
+}
+
+
+        /* Single card styling */
+        .card {
+            width: 80%;
+            max-width: 500px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .card img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .card h2 {
+            margin: 15px 0 10px;
+        }
+
+        .card h4 {
+            margin: 10px 0;
+            color: #777;
+        }
+
+        .card p {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .card a {
+            text-decoration: none;
+            color: #ff6347;
+            font-weight: bold;
+        }
+
+        /* Footer styling */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #ff6347;
+            text-decoration: none;
+        }
+
+        /* Responsive for small screens */
+        @media (max-width: 600px) {
+            .card {
+                width: 95%;
+            }
+        }
+    </style>
 </head>
 <body>
     <%- include("navbar") %>
@@ -12,7 +128,7 @@
         <% blogs.forEach(blog => { %>
             <div class="card">
                 <% if(blog.image) { %>
-                    <img src="<%= blog.image %>" alt="<%= blog.title %>" width="250">
+                    <img src="<%= blog.image %>" alt="<%= blog.title %>">
                 <% } %>
                 <h2><%= blog.title %></h2>
                 <h4><%= blog.subTitle %></h4>
