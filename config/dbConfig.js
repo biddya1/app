@@ -35,10 +35,13 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.blogs = require("../model/blogModel")(sequelize, DataTypes);
-db.users = require("../model/userModel")(sequelize, DataTypes);
+// ✅ Register models
+db.User = require("../model/userModel")(sequelize, DataTypes);
+db.Blog = require("../model/blogModel")(sequelize, DataTypes);
 
-db.sequelize.sync({ force: false })
-    .then(() => console.log("Database synced!"));
+// ✅ Sync database: create tables or add missing columns
+db.sequelize.sync({ alter: true }) // use force: true to drop & recreate table
+    .then(() => console.log("Database synced!"))
+    .catch(err => console.error("Sync error:", err));
 
 module.exports = db;
