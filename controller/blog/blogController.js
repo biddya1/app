@@ -1,14 +1,13 @@
-// controller/blog/blogController.js
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../../config/dbConfig").sequelize;
 
 // Import Blog model
 const Blog = require("../../model/blogModel")(sequelize, DataTypes);
 
-// List all blogs
+// List all blogs (Homepage)
 exports.renderHome = async (req, res) => {
   try {
-    const blogs = await Blog.findAll();
+    const blogs = await Blog.findAll({ order: [["createdAt", "DESC"]] }); // newest first
     res.render("home", { blogs });
   } catch (err) {
     console.error(err);
@@ -16,20 +15,28 @@ exports.renderHome = async (req, res) => {
   }
 };
 
-// Add blog page
+// Render add blog page
 exports.renderAddBlog = (req, res) => res.render("addBlog");
 
 // Add new blog
 exports.addBlog = async (req, res) => {
+  // ✅ Fix: fallback userId if req.user is undefined
+  const userId = req.user ? req.user.id : 1;
+
   const { title, subTitle, description } = req.body;
-  if (!title || !subTitle || !description) return res.send("Please provide all fields");
+
+  if (!title || !subTitle || !description)
+    return res.send("Please provide all fields");
+
   try {
     await Blog.create({
       title,
       subTitle,
       description,
       image: req.file ? `/uploads/${req.file.filename}` : null,
+      userId, // always provide userId
     });
+
     res.redirect("/");
   } catch (err) {
     console.error(err);
@@ -62,7 +69,7 @@ exports.deleteBlog = async (req, res) => {
   }
 };
 
-// Render update page
+// Render update blog page
 exports.renderUpdateBlog = async (req, res) => {
   const { id } = req.params;
   try {
@@ -75,12 +82,14 @@ exports.renderUpdateBlog = async (req, res) => {
   }
 };
 
-// Update blog
-exports.UpdateBlog = async (req, res) => {
+// ✅ Update blog function: lowercase
+exports.updateBlog = async (req, res) => {
   const { id } = req.params;
   const { title, subTitle, description } = req.body;
+
   const updateData = { title, subTitle, description };
   if (req.file) updateData.image = `/uploads/${req.file.filename}`;
+
   try {
     await Blog.update(updateData, { where: { id } });
     res.redirect(`/blog/${id}`);

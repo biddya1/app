@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const cookieParser = require('cookie-parser');
 const db = require("./config/dbConfig");
 const blogRoutes = require("./routes/blogRoutes"); // optional
 const userRoute = require("./routes/userRoute");
@@ -10,6 +11,8 @@ const app = express();
 // Set EJS views
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+app.use(cookieParser());
 
 // Body parser for form submissions
 app.use(express.urlencoded({ extended: true }));

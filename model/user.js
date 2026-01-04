@@ -1,43 +1,16 @@
-const dbConfig = require("../config/dbConfig");
-const { Sequelize, DataTypes } = require("sequelize");
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define(
+    "User",
+    {
+      username: { type: DataTypes.STRING, allowNull: false },
+      email: { type: DataTypes.STRING, allowNull: false, unique: true },
+      password: { type: DataTypes.STRING, allowNull: false },
+    },
+    {
+      freezeTableName: true, // ensures table name is exactly "User"
+      timestamps: true,
+    }
+  );
 
-// la sequelize yo config haru lag ani database connect gardey vaneko hae 
-const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-  host: dbConfig.HOST,
-  dialect: dbConfig.dialect,
-  operatorsAliases: false,
-  port : 50469, 
-
-  pool: {
-    max: dbConfig.pool.max,
-    min: dbConfig.pool.min,
-    acquire: dbConfig.pool.acquire,
-    idle: dbConfig.pool.idle,
-  },
-});
-
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("CONNECTED!!");
-  })
-  .catch((err) => {
-    console.log("Error" + err);
-  });
-
-const db = {};
-
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
-
-// importing model files 
-db.blogs = require("./blogModel.js")(sequelize, DataTypes);
-db.users = require("./userModel.js")(sequelize, DataTypes);
-
-
-
-db.sequelize.sync({ force: false}).then(() => {
-  console.log("yes re-sync done");
-});
-
-module.exports = db;
+  return User;
+};
