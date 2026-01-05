@@ -1,18 +1,23 @@
 const express = require("express");
 const router = express.Router();
+
 const {
   renderRegisterForm,
   registerUser,
   renderLoginForm,
-  loginUser
+  loginUser,
+  logoutUser // ✅ corrected function name (lowercase 'o')
 } = require("../controller/user/userController");
 
-// Registration routes
-router.route("/register").get(renderRegisterForm);
-router.route("/register").post(registerUser);
+// ------------------- Registration Routes -------------------
+router.get("/register", renderRegisterForm);
+router.post("/register", registerUser);
 
-// Login routes
-router.route("/login").get(renderLoginForm);
-router.route("/login").post(loginUser); // add this if missing
+// ------------------- Login Routes -------------------
+router.get("/login", renderLoginForm);
+router.post("/login", loginUser);
+
+// ------------------- Logout Route -------------------
+router.get("/logout", logoutUser);
 
 module.exports = router;

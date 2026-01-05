@@ -1,40 +1,50 @@
 const express = require("express");
 const path = require("path");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const db = require("./config/dbConfig");
-const blogRoutes = require("./routes/blogRoutes"); // optional
+const blogRoutes = require("./routes/blogRoutes");
 const userRoute = require("./routes/userRoute");
 
 const sequelize = db.sequelize;
 const app = express();
 
-// Set EJS views
+// ================= VIEW ENGINE =================
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// ================= MIDDLEWARE =================
 app.use(cookieParser());
-
-// Body parser for form submissions
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve uploads folder
+// ================= STATIC FILES =================
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ ROUTE ORDER: userRoute first, blogRoutes second
+app.use((req,res,next)=>{
+  res.locals.currentUser = req.cookies.token
+  next();
+});
+
+// ================= ROUTES =================
+// User routes first (login, register)
 app.use("/", userRoute);
+
+// Blog routes second
 app.use("/", blogRoutes);
 
-// 404 fallback
+// ================= 404 HANDLER =================
 app.use((req, res) => {
   res.status(404).send("Page not found");
 });
 
-// ✅ Sync database with alter:true to fix missing columns
+// ================= DATABASE + SERVER =================
 const PORT = 3000;
-sequelize.sync({ alter: false }) // change from force:false or alter:false
+
+// ❌ DO NOT use alter:true (causes too many keys error)
+// ❌ DO NOT use force:true in normal runs
+sequelize.sync()
   .then(() => {
     console.log("Database synced!");
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(3000, () => console.log("Server running on port 3000"));
   })
-  .catch(err => console.error("Sync error:", err));
+  .catch(err => console.error("DB sync error:", err));

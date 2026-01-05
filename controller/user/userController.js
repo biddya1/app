@@ -3,17 +3,17 @@ const User = db.User;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Show registration form
+// ------------------- Show registration form -------------------
 exports.renderRegisterForm = (req, res) => {
-    res.render("register");
+    res.render("register"); // make sure register.ejs exists
 };
 
-// Show login form
+// ------------------- Show login form -------------------
 exports.renderLoginForm = (req, res) => {
-    res.render("login");
+    res.render("login"); // make sure login.ejs exists
 };
 
-// Handle registration
+// ------------------- Handle registration -------------------
 exports.registerUser = async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -41,7 +41,7 @@ exports.registerUser = async (req, res) => {
     }
 };
 
-// Handle login ✅ FIXED for cookie
+// ------------------- Handle login -------------------
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
 
@@ -61,33 +61,41 @@ exports.loginUser = async (req, res) => {
             return res.send("Invalid email or password");
         }
 
-        // ✅ Create JWT token (optional, but safe)
+        // Create JWT token
         const token = jwt.sign(
             { id: user.id },
-            process.env.secretKey || "secret",  // fallback secret
+            process.env.secretKey || "secret",
             { expiresIn: "1d" }
         );
 
-        // ✅ SET cookie visible in browser
+        // Set cookie visible in browser
         res.cookie("token", token, {
-            httpOnly: false,      // 👈 change to false so you can see in browser
+            httpOnly: false,
             sameSite: "lax",
             maxAge: 24*60*60*1000,
             path: "/"
         });
 
-        // ✅ Optional: username cookie for display
+        // Optional: username cookie for display
         res.cookie("name", user.username, {
-            httpOnly: false,      
+            httpOnly: false,
             sameSite: "lax",
             maxAge: 24*60*60*1000,
             path: "/"
         });
 
-        return res.redirect("/"); // cookie is sent with this response
+        return res.redirect("/"); // redirect home
 
     } catch (err) {
         console.error("LOGIN ERROR 👉", err);
         return res.status(500).send("Server error");
     }
+};
+
+// ------------------- Handle logout -------------------
+// ✅ Function name corrected to lowercase
+exports.logoutUser = (req,res) => {
+    res.clearCookie('token');
+    res.clearCookie('name'); // clear username cookie too
+    res.redirect("/login");
 };

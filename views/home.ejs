@@ -132,7 +132,9 @@
                 <% } %>
                 <h2><%= blog.title %></h2>
                 <h4><%= blog.subTitle %></h4>
-                <p><%= blog.description %></p>
+                <p>Author : <%= blog.user.username %></p>
+                                <p><%= blog.description %></p>
+
                 <a href="/blog/<%= blog.id %>">See more</a>
             </div>
         <% }) %>

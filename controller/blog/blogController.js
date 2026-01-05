@@ -4,10 +4,24 @@ const sequelize = require("../../config/dbConfig").sequelize;
 // Import Blog model
 const Blog = require("../../model/blogModel")(sequelize, DataTypes);
 
+// ✅ Import User model
+const User = require("../../model/userModel")(sequelize, DataTypes);
+
+// ✅ Define association
+Blog.belongsTo(User, { foreignKey: "userId", as: "user" });
+User.hasMany(Blog, { foreignKey: "userId" });
+
 // List all blogs (Homepage)
 exports.renderHome = async (req, res) => {
   try {
-    const blogs = await Blog.findAll({ order: [["createdAt", "DESC"]] }); // newest first
+    const blogs = await Blog.findAll({
+      order: [["createdAt", "DESC"]],
+      include: {
+        model: User,
+        as: "user",               // matches alias
+        attributes: ["username"], // only fetch username
+      },
+    });
     res.render("home", { blogs });
   } catch (err) {
     console.error(err);
@@ -20,9 +34,7 @@ exports.renderAddBlog = (req, res) => res.render("addBlog");
 
 // Add new blog
 exports.addBlog = async (req, res) => {
-  // ✅ Fix: fallback userId if req.user is undefined
   const userId = req.user ? req.user.id : 1;
-
   const { title, subTitle, description } = req.body;
 
   if (!title || !subTitle || !description)
@@ -34,7 +46,7 @@ exports.addBlog = async (req, res) => {
       subTitle,
       description,
       image: req.file ? `/uploads/${req.file.filename}` : null,
-      userId, // always provide userId
+      userId,
     });
 
     res.redirect("/");
@@ -48,14 +60,23 @@ exports.addBlog = async (req, res) => {
 exports.renderSingleBlog = async (req, res) => {
   const { id } = req.params;
   try {
-    const blog = await Blog.findByPk(id);
+    const blog = await Blog.findByPk(id, {
+      include: {
+        model: User,
+        as: "user",
+        attributes: ["username"],
+      },
+    });
+
     if (!blog) return res.status(404).send("Blog not found");
+
     res.render("singleBlog", { blog });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching blog");
   }
 };
+
 
 // Delete blog
 exports.deleteBlog = async (req, res) => {
@@ -82,7 +103,7 @@ exports.renderUpdateBlog = async (req, res) => {
   }
 };
 
-// ✅ Update blog function: lowercase
+// Update blog
 exports.updateBlog = async (req, res) => {
   const { id } = req.params;
   const { title, subTitle, description } = req.body;
